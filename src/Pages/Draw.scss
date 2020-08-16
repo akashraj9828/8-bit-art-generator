@@ -2,7 +2,7 @@
 	display: flex;
 	width: 50%;
 	margin: 20px auto;
-	flex-direction: column;
+	flex-direction: row;
 	justify-content: center;
 	align-items: center;
 	input {
@@ -15,7 +15,7 @@
 	.art-container {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		// justify-content: center;
 		align-items: center;
 		.art-header {
 			font-size: 2rem;
@@ -23,33 +23,51 @@
 	}
 }
 
+#pixelart-html,
+#pixelart-svg,
+#pixelart-canvas {
+	border: solid 0.1px transparentize($color: black, $amount: 0.9);
+}
+
 .canvas {
 	display: flex;
 	flex-direction: column;
 }
+
 .cellrow {
 	display: flex;
 	.cell {
 		border: solid 0.1px transparentize($color: black, $amount: 0.9);
+		cursor: crosshair;
+		&:hover {
+			background: yellow;
+		}
 	}
 }
 
-// .canvas {
-// 	border: 0.5px solid transparentize($color: grey, $amount: 0.5);
-// 	cursor: crosshair;
-// 	background: transparent;
-// }
-// .cellrow {
-// 	line-height: 0;
-// 	white-space: nowrap;
-// 	.cell {
-// 		margin: 0px;
-// 		border: solid 0.1px transparentize($color: black, $amount: 0.9);
-// 		&:hover {
-// 			background: yellow;
-// 		}
-// 	}
-// }
+.art-header {
+	display: flex;
+	// align-items: center;
+}
+
+.btn {
+	padding: 0.1rem 0.4rem;
+	background: rgb(103, 103, 160);
+	color: white;
+	border-radius: 0.2rem;
+	border: 0;
+	font-size: 1.2rem;
+	&:hover {
+		background: rgb(94, 94, 131);
+	}
+}
+
+.btn-square {
+	$size: 30px;
+	width: $size;
+	height: $size;
+	padding: 0;
+}
 
 .noselect {
 	-webkit-touch-callout: none; /* iOS Safari */
