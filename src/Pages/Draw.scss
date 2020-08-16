@@ -12,31 +12,44 @@
 .vs {
 	display: flex;
 	justify-content: space-evenly;
-}
-
-.no-line-height {
-	line-height: 0;
-}
-.canvas {
-	border: 0.5px solid transparentize($color: grey, $amount: 0.5);
-	display: inline-block;
-	// cursor: url("/brush64.png"), auto;
-	cursor: crosshair;
-	background: transparent;
-}
-.cellrow {
-	line-height: 0;
-	white-space: nowrap;
-	display: flex;
-}
-.cell {
-	margin: 0px;
-	border: solid 0.1px transparentize($color: black, $amount: 0.9);
-	display: 'inline-flex';
-	&:hover {
-		background: yellow;
+	.art-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		.art-header {
+			font-size: 2rem;
+		}
 	}
 }
+
+.canvas {
+	display: flex;
+	flex-direction: column;
+}
+.cellrow {
+	display: flex;
+	.cell {
+		border: solid 0.1px transparentize($color: black, $amount: 0.9);
+	}
+}
+
+// .canvas {
+// 	border: 0.5px solid transparentize($color: grey, $amount: 0.5);
+// 	cursor: crosshair;
+// 	background: transparent;
+// }
+// .cellrow {
+// 	line-height: 0;
+// 	white-space: nowrap;
+// 	.cell {
+// 		margin: 0px;
+// 		border: solid 0.1px transparentize($color: black, $amount: 0.9);
+// 		&:hover {
+// 			background: yellow;
+// 		}
+// 	}
+// }
 
 .noselect {
 	-webkit-touch-callout: none; /* iOS Safari */
@@ -46,4 +59,16 @@
 	-ms-user-select: none; /* Internet Explorer/Edge */
 	user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+.no-line-height {
+	line-height: 0;
+}
+
+.d-none {
+	display: none;
+}
+
+.mx-1 {
+	margin: 1rem;
 }
