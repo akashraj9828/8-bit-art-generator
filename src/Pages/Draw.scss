@@ -14,6 +14,9 @@
 	justify-content: space-evenly;
 }
 
+.no-line-height {
+	line-height: 0;
+}
 .canvas {
 	border: 0.5px solid transparentize($color: grey, $amount: 0.5);
 	display: inline-block;
@@ -23,22 +26,23 @@
 }
 .cellrow {
 	line-height: 0;
+	white-space: nowrap;
 }
 .cell {
-	// background: black;
 	margin: 0px;
-	// border: groove 0.1px white;
+	border: solid 0.1px transparentize($color: black, $amount: 0.9);
+	display: 'inline-flex';
 	&:hover {
 		background: yellow;
 	}
 }
 
 .noselect {
-	//   -webkit-touch-callout: none; /* iOS Safari */
-	//     -webkit-user-select: none; /* Safari */
-	//      -khtml-user-select: none; /* Konqueror HTML */
-	//        -moz-user-select: none; /* Old versions of Firefox */
-	//         -ms-user-select: none; /* Internet Explorer/Edge */
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
 	user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }

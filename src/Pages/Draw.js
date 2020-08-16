@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import './Draw.scss';
 
 const emptyMatrix = (size) =>
@@ -11,7 +11,7 @@ const Draw = (props) => {
 	const [canvas, setCanvas] = useState(emptyMatrix(gridSize));
 	const [color, setColor] = useState('#e91e63');
 	const [pixelSize, setPixelSize] = useState(20);
-
+	const [svg, setSvg] = useState('');
 	const fillCell = (row, col) => {
 		const canvasCopy = [...canvas];
 		canvasCopy[row][col] = color;
@@ -32,33 +32,48 @@ const Draw = (props) => {
 
 	useEffect(() => {
 		let shadow = [];
-
+		let svg_internal = [];
 		canvas.forEach((row, rowIndex) => {
 			row.forEach((cell, colIndex) => {
 				if (cell) {
-					shadow.push(`${colIndex * pixelSize}px ${rowIndex * pixelSize}px ${cell}`);
+					shadow.push(`${colIndex * pixelSize}px ${rowIndex * pixelSize}px  ${cell}`);
+					svg_internal.push(`<rect width=${pixelSize} height=${pixelSize} style='transform:translate(${colIndex * pixelSize}px , ${rowIndex * pixelSize}px )' fill=${cell} />`);
 				}
 			});
 		});
 
 		shadow = shadow.join(',') + ';';
 		let new_css = `
-		#pixelart {
+		#pixelart-html {
 			width: ${pixelSize * gridSize}px;
 			height: ${pixelSize * gridSize}px;
 		}
 		
-		#pixelart:after {
+		#pixelart-html:after {
 			content: '';
 			display: block;
-			width: 24px;
-			height: 24px;
+			width: ${pixelSize}px;
+			height: ${pixelSize}px;
 			background: ${canvas[0][0] ? canvas[0][0] : 'transparent'};
 			box-shadow:${shadow} ;
 			
 		}`;
 		setCss(new_css);
+
+		const final_svg = `<svg xmlns="http://www.w3.org/2000/svg" width=${pixelSize * gridSize} height=${pixelSize * gridSize} viewBox="0 0 ${pixelSize * gridSize} ${pixelSize * gridSize}">
+								${svg_internal.join('\n')}
+							</svg>	`;
+
+		setSvg(final_svg);
 	}, [canvas]);
+
+	const svgElement = useRef(null);
+
+	useEffect(() => {
+		if (svgElement) {
+			svgElement.current.innerHTML = svg;
+		}
+	}, [svg, svgElement]);
 
 	useEffect(() => {
 		const old_style = document.getElementById('live-style');
@@ -81,7 +96,8 @@ const Draw = (props) => {
 			</div>
 
 			<div className='vs'>
-				<div className='canvas noselect' onSelect={() => false} onMouseDown={() => setDragging(true)} onMouseUp={() => setDragging(false)}>
+				<div id='pixelart-html' className='no-line-height'></div>
+				<div className='canvas noselect no-line-height' onSelect={() => false} onMouseDown={() => setDragging(true)} onMouseUp={() => setDragging(false)}>
 					{canvas.map((rowData, row) => {
 						return (
 							<div className='cellrow' key={row}>
@@ -98,12 +114,10 @@ const Draw = (props) => {
 						);
 					})}
 				</div>
-				<div className='real'>
-					<div id='pixelart'></div>
-				</div>
+				<div id='pixelart-svg' className='no-line-height' ref={svgElement}></div>
 			</div>
 			<div className='output'>
-				<pre className='html'>{"<div id='pixelart'></div>"}</pre>
+				<pre className='html'>{"<div id='pixelart-html'></div>"}</pre>
 				<pre className='css'>{css}</pre>
 			</div>
 		</Fragment>
