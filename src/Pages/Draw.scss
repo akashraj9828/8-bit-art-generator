@@ -74,3 +74,15 @@
 	height: $size;
 	padding: 0;
 }
+
+.colors {
+	display: flex;
+}
+
+.color-history.circle {
+	$size: 25px;
+	width: $size;
+	height: $size;
+	margin: 0 0.5rem;
+	border-radius: 50%;
+}

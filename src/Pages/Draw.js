@@ -12,6 +12,7 @@ const Draw = (props) => {
 	const [gridSize, setGridSize] = useState(13);
 	const [canvas, setCanvas] = useState(emptyMatrix(gridSize));
 	const [color, setColor] = useState('#62fb60');
+	const [colorHistory, setColorHistory] = useState([]);
 	const [pixelSize, setPixelSize] = useState(20);
 	const svgElement = useRef(null);
 	const [svg, setSvg] = useState('');
@@ -35,6 +36,7 @@ const Draw = (props) => {
 			}
 		});
 		setCanvas(new_grid);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [gridSize]);
 
 	// on init set heart art as default
@@ -107,10 +109,21 @@ const Draw = (props) => {
 		})();
 	}, [css]);
 
+	const updateColor = (selected_color) => {
+		setColor(selected_color);
+		let colorHistoryCopy = [...colorHistory];
+		if (!colorHistoryCopy.includes(selected_color)) {
+			colorHistoryCopy.unshift(selected_color);
+			colorHistoryCopy.splice(6);
+		}
+		setColorHistory(colorHistoryCopy);
+	};
+
 	const fillCell = (row, col, e) => {
 		(async () => {
 			const canvasCopy = [...canvas];
 			canvasCopy[row][col] = color;
+			if (e.shiftKey) canvasCopy[row][col] = '';
 			setCanvas([...canvasCopy]);
 		})();
 	};
@@ -157,8 +170,14 @@ const Draw = (props) => {
 					</div>
 					<br />
 				</div>
-				<div className='color my-1'>
-					<input type='color' value={color} onChange={(e) => setColor(e.target.value)} />
+				<div className='color center'>
+					<span className='small text-muted my-05'>(Hold 'Shift' key to Erase)</span>
+					<div className='colors'>
+						{colorHistory.map((e, i) => (
+							<span key={i} className='color-history circle' style={{ background: e }} onClick={() => updateColor(e)}></span>
+						))}
+						<input type='color' value={color} onChange={(e) => updateColor(e.target.value)} />
+					</div>
 				</div>
 				<div className='vs noselect'>
 					<div className='art-container'>

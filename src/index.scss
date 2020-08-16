@@ -32,3 +32,19 @@ body {
 .my-1 {
 	margin-block: 1rem;
 }
+.my-05 {
+	margin-block: 0.5rem;
+}
+.center {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.small {
+	font-size: 0.8rem;
+}
+.text-muted {
+	color: transparentize($color: grey, $amount: 0.5);
+}
