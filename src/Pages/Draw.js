@@ -12,10 +12,17 @@ const Draw = (props) => {
 	const [color, setColor] = useState('#e91e63');
 	const [pixelSize, setPixelSize] = useState(20);
 	const [svg, setSvg] = useState('');
-	const fillCell = (row, col) => {
-		const canvasCopy = [...canvas];
-		canvasCopy[row][col] = color;
-		setCanvas([...canvasCopy]);
+	const fillCell = (row, col, e) => {
+		(async () => {
+			console.log(e);
+			console.log(e.detail);
+			console.log(e.metaKey);
+			console.log(e.target);
+			console.log(e.shiftKey);
+			const canvasCopy = [...canvas];
+			canvasCopy[row][col] = color;
+			setCanvas([...canvasCopy]);
+		})();
 	};
 
 	useEffect(() => {
@@ -31,19 +38,20 @@ const Draw = (props) => {
 	`);
 
 	useEffect(() => {
-		let shadow = [];
-		let svg_internal = [];
-		canvas.forEach((row, rowIndex) => {
-			row.forEach((cell, colIndex) => {
-				if (cell) {
-					shadow.push(`${colIndex * pixelSize}px ${rowIndex * pixelSize}px  ${cell}`);
-					svg_internal.push(`<rect width=${pixelSize} height=${pixelSize} style='transform:translate(${colIndex * pixelSize}px , ${rowIndex * pixelSize}px )' fill=${cell} />`);
-				}
+		(async () => {
+			let shadow = [];
+			let svg_internal = [];
+			canvas.forEach((row, rowIndex) => {
+				row.forEach((cell, colIndex) => {
+					if (cell) {
+						shadow.push(`${colIndex * pixelSize}px ${rowIndex * pixelSize}px  ${cell}`);
+						svg_internal.push(`<rect width=${pixelSize} height=${pixelSize} style='transform:translate(${colIndex * pixelSize}px , ${rowIndex * pixelSize}px )' fill=${cell} />`);
+					}
+				});
 			});
-		});
 
-		shadow = shadow.join(',') + ';';
-		let new_css = `
+			shadow = shadow.join(',') + ';';
+			let new_css = `
 		#pixelart-html {
 			width: ${pixelSize * gridSize}px;
 			height: ${pixelSize * gridSize}px;
@@ -58,33 +66,38 @@ const Draw = (props) => {
 			box-shadow:${shadow} ;
 			
 		}`;
-		setCss(new_css);
+			setCss(new_css);
 
-		const final_svg = `<svg xmlns="http://www.w3.org/2000/svg" width=${pixelSize * gridSize} height=${pixelSize * gridSize} viewBox="0 0 ${pixelSize * gridSize} ${pixelSize * gridSize}">
+			const final_svg = `<svg xmlns="http://www.w3.org/2000/svg" width=${pixelSize * gridSize} height=${pixelSize * gridSize} viewBox="0 0 ${pixelSize * gridSize} ${pixelSize * gridSize}">
 								${svg_internal.join('\n')}
 							</svg>	`;
 
-		setSvg(final_svg);
-	}, [canvas]);
+			setSvg(final_svg);
+		})();
+	}, [canvas, pixelSize, gridSize]);
 
 	const svgElement = useRef(null);
 
 	useEffect(() => {
 		if (svgElement) {
-			svgElement.current.innerHTML = svg;
+			(async () => {
+				svgElement.current.innerHTML = svg;
+			})();
 		}
 	}, [svg, svgElement]);
 
 	useEffect(() => {
-		const old_style = document.getElementById('live-style');
-		if (old_style) {
-			old_style.remove();
-		}
-		var style = document.createElement('style');
-		style.type = 'text/css';
-		style.id = 'live-style';
-		style.innerHTML = css;
-		document.getElementsByTagName('head')[0].appendChild(style);
+		(async () => {
+			const old_style = document.getElementById('live-style');
+			if (old_style) {
+				old_style.remove();
+			}
+			var style = document.createElement('style');
+			style.type = 'text/css';
+			style.id = 'live-style';
+			style.innerHTML = css;
+			document.getElementsByTagName('head')[0].appendChild(style);
+		})();
 	}, [css]);
 
 	const [dragging, setDragging] = useState(false);
@@ -106,9 +119,8 @@ const Draw = (props) => {
 										width: pixelSize,
 										height: pixelSize,
 										background: cell,
-										display: 'inline-flex',
 									};
-									return <div key={`${row}+${col}`} className='cell noselect' style={localStyle} onClick={() => fillCell(row, col)} onMouseOver={() => dragging && fillCell(row, col)} />;
+									return <div key={`${row}+${col}`} className='cell noselect' style={localStyle} onClick={(e) => fillCell(row, col, e)} onMouseOver={(e) => dragging && fillCell(row, col, e)} />;
 								})}
 							</div>
 						);
