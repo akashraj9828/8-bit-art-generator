@@ -1,5 +1,29 @@
+.settings {
+	display: flex;
+	width: 50%;
+	margin: 20px auto;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	input {
+		margin: 5px 0;
+	}
+}
+.cellrow {
+	line-height: 0;
+}
 .cell {
 	background: black;
-	margin: 5px;
-	border: solid 1px black;
+	margin: 0px;
+	border: groove 0.1px white;
+}
+
+.noselect {
+	//   -webkit-touch-callout: none; /* iOS Safari */
+	//     -webkit-user-select: none; /* Safari */
+	//      -khtml-user-select: none; /* Konqueror HTML */
+	//        -moz-user-select: none; /* Old versions of Firefox */
+	//         -ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }

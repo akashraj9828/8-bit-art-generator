@@ -12,9 +12,9 @@ const emptyMatrix = (row, col) =>
 		);
 
 const Draw = (props) => {
-	const [canvas, setCanvas] = useState(emptyMatrix(8, 8));
-	const [size, setSize] = useState(20);
-	const [color, setColor] = useState('tomato');
+	const [gridSize, setGridSize] = useState(20);
+	const [canvas, setCanvas] = useState(emptyMatrix(14, 14));
+	const [color, setColor] = useState('#ff6347');
 	const verify = (row, col, canvas) => {
 		return Boolean(canvas[row][col]);
 	};
@@ -24,35 +24,36 @@ const Draw = (props) => {
 			const canvasCopy = JSON.parse(JSON.stringify(canvas));
 			canvasCopy[row][col].color = color;
 			setCanvas([...canvasCopy]);
-			console.log('canvas update');
 		}
 	};
 
 	useEffect(() => {
-		console.log('---: Draw -> canvas changed');
-		console.log('---: Draw -> canvas', canvas);
-	}, [canvas]);
+		setCanvas(emptyMatrix(gridSize, gridSize));
+	}, [gridSize]);
 
+	useEffect(() => {}, [canvas]);
+
+	const [dragging, setDragging] = useState(false);
 	return (
 		<Fragment>
 			<div className='settings'>
 				<input type='color' value={color} onChange={(e) => setColor(e.target.value)} />
+				<input type='range' min='4' max='20' value={gridSize} onChange={(e) => setGridSize(e.target.valueAsNumber)} />
 			</div>
-			<div className='canvas'>
+			<div className='canvas noselect' onSelect={() => false} onMouseDown={() => setDragging(true)} onMouseUp={() => setDragging(false)}>
 				{canvas.map((rowData, row) => {
 					return (
-						<Fragment key={row}>
+						<div className='cellrow' key={row}>
 							{rowData.map((cell, col) => {
 								const localStyle = {
-									width: size,
-									height: size,
+									width: 20,
+									height: 20,
 									background: cell.color,
 									display: 'inline-flex',
 								};
-								return <div key={`${row}+${col}`} className='cell' style={localStyle} onClick={() => fillCell(row, col)} />;
+								return <div key={`${row}+${col}`} className='cell noselect' style={localStyle} onClick={() => fillCell(row, col)} onMouseOver={() => dragging && fillCell(row, col)} />;
 							})}
-							<br />
-						</Fragment>
+						</div>
 					);
 				})}
 			</div>
