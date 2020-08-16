@@ -1,0 +1,43 @@
+footer {
+	z-index: -1;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	.gitIcons,
+	.footer-text {
+		text-align: center;
+	}
+	.gitIcons {
+		span {
+			margin: 0.5rem 0.5rem;
+		}
+	}
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	color: black;
+	transition: 0.5s;
+	border-radius: 3px;
+	font-weight: bold;
+	.heart {
+		transition: 0.5s;
+	}
+	&:hover {
+		color: tomato;
+		.heart,
+		a {
+			color: tomato;
+		}
+	}
+	a {
+		color: black;
+		text-decoration: none;
+		transition: 0.5s;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}

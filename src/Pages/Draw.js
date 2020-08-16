@@ -11,7 +11,7 @@ const emptyMatrix = (size) =>
 const Draw = (props) => {
 	const [gridSize, setGridSize] = useState(13);
 	const [canvas, setCanvas] = useState(emptyMatrix(gridSize));
-	const [color, setColor] = useState('#e91e63');
+	const [color, setColor] = useState('#62fb60');
 	const [pixelSize, setPixelSize] = useState(20);
 	const svgElement = useRef(null);
 	const [svg, setSvg] = useState('');
@@ -23,7 +23,18 @@ const Draw = (props) => {
 
 	// on gridSizeChange Reset Canvas
 	useEffect(() => {
-		setCanvas(emptyMatrix(gridSize));
+		let new_grid = emptyMatrix(gridSize);
+		let old_grid = canvas;
+		old_grid.forEach((row, rowIndex) => {
+			if (gridSize > rowIndex) {
+				row.forEach((cell, colIndex) => {
+					if (gridSize > colIndex) {
+						new_grid[rowIndex][colIndex] = old_grid[rowIndex][colIndex];
+					}
+				});
+			}
+		});
+		setCanvas(new_grid);
 	}, [gridSize]);
 
 	// on init set heart art as default
@@ -117,78 +128,81 @@ const Draw = (props) => {
 	const [dragging, setDragging] = useState(false);
 	return (
 		<Fragment>
-			<div className='settings noselect'>
-				<div className='grid-size'>
-					<button className='btn action-btn mx-1 btn-square decrement' onClick={() => setGridSize((s) => (s > 1 ? s - 1 : s))}>
-						-
-					</button>
-					<span className='grid-size-value'>
-						{gridSize} x {gridSize}
-					</span>
-					<button className='btn action-btn mx-1 btn-square increment' onClick={() => setGridSize((s) => s + 1)}>
-						+
-					</button>
+			<div className='draw-container'>
+				<div className='settings noselect'>
+					<div className='grid-size'>
+						<button className='btn action-btn mx-1 btn-square decrement' onClick={() => setGridSize((s) => (s > 1 ? s - 1 : s))}>
+							-
+						</button>
+						<span className='grid-size-value'>
+							{gridSize} x {gridSize}
+						</span>
+						<button className='btn action-btn mx-1 btn-square increment' onClick={() => setGridSize((s) => s + 1)}>
+							+
+						</button>
+					</div>
+					<div className='pixel-size'>
+						<button className='btn action-btn mx-1 btn-square decrement' onClick={() => setPixelSize((s) => (s > 5 ? s - 1 : s))}>
+							-
+						</button>
+						<span className='pixel-size-value'>{pixelSize}px</span>
+						<button className='btn action-btn mx-1 btn-square increment' onClick={() => setPixelSize((s) => s + 1)}>
+							+
+						</button>
+					</div>
+					<div className='extra'>
+						<button className='btn action-btn mx-1 reset-btn' onClick={() => setCanvas(emptyMatrix(gridSize))}>
+							Reset
+						</button>
+					</div>
+					<br />
 				</div>
-				<div className='pixel-size'>
-					<button className='btn action-btn mx-1 btn-square decrement' onClick={() => setPixelSize((s) => (s > 5 ? s - 1 : s))}>
-						-
-					</button>
-					<span className='pixel-size-value'>{pixelSize}px</span>
-					<button className='btn action-btn mx-1 btn-square increment' onClick={() => setPixelSize((s) => s + 1)}>
-						+
-					</button>
-				</div>
-				<div className='color'>
+				<div className='color my-1'>
 					<input type='color' value={color} onChange={(e) => setColor(e.target.value)} />
 				</div>
-				<div className='extra'>
-					<button className='btn action-btn mx-1 html-download' onClick={() => setCanvas(emptyMatrix(gridSize))}>
-						Reset
-					</button>
-				</div>
-			</div>
-			<div className='vs noselect'>
-				<div className='art-container'>
-					<span className='art-header'>HTML</span>
-					<div id='pixelart-html' className='no-line-height'></div>
-					<button className='btn action-btn mx-1 html-download' onClick={downloadHTML}>
-						Download
-					</button>
-				</div>
-				<div className='art-container'>
-					<span className='art-header'>YOUR CANVAS</span>
-					<div id='pixelart-canvas' className='canvas no-line-height' onSelect={() => false} onMouseDown={() => setDragging(true)} onMouseUp={() => setDragging(false)}>
-						{canvas.map((rowData, row) => {
-							return (
-								<div className='cellrow' key={row}>
-									{rowData.map((cell, col) => {
-										const localStyle = {
-											width: pixelSize,
-											height: pixelSize,
-											background: cell,
-										};
-										return <div key={`${row}+${col}`} className='cell' style={localStyle} onClick={(e) => fillCell(row, col, e)} onMouseOver={(e) => dragging && fillCell(row, col, e)} />;
-									})}
-								</div>
-							);
-						})}
+				<div className='vs noselect'>
+					<div className='art-container'>
+						<span className='art-header'>HTML</span>
+						<div id='pixelart-html' className='no-line-height'></div>
+						<button className='btn action-btn my-1 html-download' onClick={downloadHTML}>
+							Download
+						</button>
+					</div>
+					<div className='art-container'>
+						<span className='art-header'>YOUR CANVAS</span>
+						<div id='pixelart-canvas' className='canvas no-line-height' onSelect={() => false} onMouseDown={() => setDragging(true)} onMouseUp={() => setDragging(false)}>
+							{canvas.map((rowData, row) => {
+								return (
+									<div className='cellrow' key={row}>
+										{rowData.map((cell, col) => {
+											const localStyle = {
+												width: pixelSize,
+												height: pixelSize,
+												background: cell,
+											};
+											return <div key={`${row}+${col}`} className='cell' style={localStyle} onClick={(e) => fillCell(row, col, e)} onMouseOver={(e) => dragging && fillCell(row, col, e)} />;
+										})}
+									</div>
+								);
+							})}
+						</div>
+					</div>
+					<div className='art-container'>
+						<span className='art-header'>SVG</span>
+						<div id='pixelart-svg' className='no-line-height' ref={svgElement}></div>
+						<button
+							className='btn action-btn my-1 svg-download'
+							onClick={() => {
+								download('pixelart.svg', svg);
+							}}>
+							Download
+						</button>
 					</div>
 				</div>
-				<div className='art-container'>
-					<span className='art-header'>SVG</span>
-					<div id='pixelart-svg' className='no-line-height' ref={svgElement}></div>
-					<button
-						className='btn action-btn mx-1 svg-download'
-						onClick={() => {
-							download('pixelart.svg', svg);
-						}}>
-						Download
-					</button>
+				<div className='output noselect d-none'>
+					<pre className='html'>{"<div id='pixelart-html'></div>"}</pre>
+					<pre className='css'>{css}</pre>
 				</div>
-			</div>
-			<div className='output noselect d-none'>
-				<pre className='html'>{"<div id='pixelart-html'></div>"}</pre>
-				<pre className='css'>{css}</pre>
 			</div>
 		</Fragment>
 	);

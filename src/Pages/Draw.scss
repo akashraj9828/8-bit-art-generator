@@ -1,3 +1,8 @@
+.draw-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
 .settings {
 	display: flex;
 	width: 100%;
@@ -12,6 +17,7 @@
 .vs {
 	display: flex;
 	justify-content: space-evenly;
+	width: 100%;
 	.art-container {
 		display: flex;
 		flex-direction: column;
@@ -52,13 +58,13 @@
 
 .btn {
 	padding: 0.1rem 0.4rem;
-	background: rgb(103, 103, 160);
+	background: tomato;
 	color: white;
 	border-radius: 0.2rem;
 	border: 0;
 	font-size: 1.2rem;
 	&:hover {
-		background: rgb(94, 94, 131);
+		background: red;
 	}
 }
 
@@ -67,26 +73,4 @@
 	width: $size;
 	height: $size;
 	padding: 0;
-}
-
-.noselect {
-	-webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Safari */
-	-khtml-user-select: none; /* Konqueror HTML */
-	-moz-user-select: none; /* Old versions of Firefox */
-	-ms-user-select: none; /* Internet Explorer/Edge */
-	user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-}
-
-.no-line-height {
-	line-height: 0;
-}
-
-.d-none {
-	display: none;
-}
-
-.mx-1 {
-	margin: 1rem;
 }

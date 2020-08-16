@@ -7,3 +7,28 @@ body {
 * {
 	box-sizing: border-box;
 }
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.no-line-height {
+	line-height: 0;
+}
+
+.d-none {
+	display: none;
+}
+
+.mx-1 {
+	margin-inline: 1rem;
+}
+.my-1 {
+	margin-block: 1rem;
+}
