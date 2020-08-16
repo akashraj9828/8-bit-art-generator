@@ -9,13 +9,28 @@
 		margin: 5px 0;
 	}
 }
+.vs {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.canvas {
+	border: 0.5px solid transparentize($color: grey, $amount: 0.5);
+	display: inline-block;
+	// cursor: url("/brush64.png"), auto;
+	cursor: crosshair;
+	background: transparent;
+}
 .cellrow {
 	line-height: 0;
 }
 .cell {
-	background: black;
+	// background: black;
 	margin: 0px;
-	border: groove 0.1px white;
+	// border: groove 0.1px white;
+	&:hover {
+		background: yellow;
+	}
 }
 
 .noselect {
