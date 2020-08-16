@@ -2,6 +2,7 @@
   "name": "8-bit-art-generator",
   "version": "1.0.0",
   "private": true,
+  "homepage": "./",
   "author": {
     "name": "Akash Raj",
     "email": "akashraj9828@gmail.com",
