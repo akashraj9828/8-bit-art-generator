@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import './Draw.scss';
 import { download } from '../Util';
-import { heart } from '../Data';
+import { heart15x15 } from '../Data';
 
 const emptyMatrix = (size) =>
 	Array(size)
@@ -9,7 +9,7 @@ const emptyMatrix = (size) =>
 		.map((_) => Array(size).fill(''));
 
 const Draw = (props) => {
-	const [gridSize, setGridSize] = useState(17);
+	const [gridSize, setGridSize] = useState(13);
 	const [canvas, setCanvas] = useState(emptyMatrix(gridSize));
 	const [color, setColor] = useState('#e91e63');
 	const [pixelSize, setPixelSize] = useState(20);
@@ -28,7 +28,7 @@ const Draw = (props) => {
 
 	// on init set heart art as default
 	useEffect(() => {
-		const default_canvas = heart();
+		const default_canvas = heart15x15();
 		setCanvas(default_canvas);
 	}, []);
 
@@ -148,7 +148,7 @@ const Draw = (props) => {
 				</div>
 			</div>
 			<div className='vs noselect'>
-				<div className='art-container d-none'>
+				<div className='art-container'>
 					<span className='art-header'>HTML</span>
 					<div id='pixelart-html' className='no-line-height'></div>
 					<button className='btn action-btn mx-1 html-download' onClick={downloadHTML}>
@@ -174,7 +174,7 @@ const Draw = (props) => {
 						})}
 					</div>
 				</div>
-				<div className='art-container d-none'>
+				<div className='art-container'>
 					<span className='art-header'>SVG</span>
 					<div id='pixelart-svg' className='no-line-height' ref={svgElement}></div>
 					<button
