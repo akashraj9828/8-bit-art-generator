@@ -14,17 +14,15 @@ const emptyMatrix = (row, col) =>
 const Draw = (props) => {
 	const [canvas, setCanvas] = useState(emptyMatrix(8, 8));
 	const [size, setSize] = useState(20);
-
+	const [color, setColor] = useState('tomato');
 	const verify = (row, col, canvas) => {
 		return Boolean(canvas[row][col]);
 	};
 
-	const setColor = (row, col, color) => {
-		//    console.log("---: setColor -> row,col,color", row,col,color);
+	const fillCell = (row, col) => {
 		if (verify(row, col, canvas)) {
 			const canvasCopy = JSON.parse(JSON.stringify(canvas));
 			canvasCopy[row][col].color = color;
-			// console.log("---: setColor -> canvasCopy", canvasCopy);
 			setCanvas([...canvasCopy]);
 			console.log('canvas update');
 		}
@@ -36,24 +34,29 @@ const Draw = (props) => {
 	}, [canvas]);
 
 	return (
-		<div className='canvas'>
-			{canvas.map((rowData, row) => {
-				return (
-					<Fragment key={row}>
-						{rowData.map((cell, col) => {
-							const localStyle = {
-								width: size,
-								height: size,
-								background: cell.color,
-								display: 'inline-flex',
-							};
-							return <div key={`${row}+${col}`} className='cell' style={localStyle} onClick={() => setColor(row, col, 'yellow')} />;
-						})}
-						<br />
-					</Fragment>
-				);
-			})}
-		</div>
+		<Fragment>
+			<div className='settings'>
+				<input type='color' value={color} onChange={(e) => setColor(e.target.value)} />
+			</div>
+			<div className='canvas'>
+				{canvas.map((rowData, row) => {
+					return (
+						<Fragment key={row}>
+							{rowData.map((cell, col) => {
+								const localStyle = {
+									width: size,
+									height: size,
+									background: cell.color,
+									display: 'inline-flex',
+								};
+								return <div key={`${row}+${col}`} className='cell' style={localStyle} onClick={() => fillCell(row, col)} />;
+							})}
+							<br />
+						</Fragment>
+					);
+				})}
+			</div>
+		</Fragment>
 	);
 };
 
