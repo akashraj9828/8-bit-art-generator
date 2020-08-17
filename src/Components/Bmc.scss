@@ -4,10 +4,10 @@
 $btn-bg: tomato;
 $btn-text: white;
 $btn-box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
-
+$size: 20px;
 .bmc-button img {
-	height: 34px !important;
-	width: 35px !important;
+	height: $size !important;
+	width: $size !important;
 	margin-bottom: 1px !important;
 	box-shadow: none !important;
 	border: none !important;
@@ -21,16 +21,16 @@ $btn-box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
 	right: 10px;
 	align-items: center;
 	// my style
-	line-height: 35px !important;
-	height: 51px !important;
+	line-height: $size !important;
+	height: $size * 2 !important;
 	text-decoration: none !important;
 	display: inline-flex !important;
 	color: $btn-text !important;
 	background-color: $btn-bg !important;
 	border-radius: 5px !important;
 	border: 1px solid transparent !important;
-	padding: 7px 15px 7px 10px !important;
-	font-size: 16px !important;
+	padding: 0.1em 0.5em 0.1em 0.5em !important;
+	font-size: $size/1.5 !important;
 	letter-spacing: 0.6px !important;
 	box-shadow: $btn-box-shadow !important;
 	margin: 0 auto !important;

@@ -1,7 +1,9 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { Fragment, useState, useEffect, useRef, useMemo } from 'react';
 import './Draw.scss';
 import { download } from '../Util';
 import { heart15x15 } from '../Data';
+import { useCopy } from '../CustomHooks';
 
 const emptyMatrix = (size) =>
 	Array(size)
@@ -14,6 +16,7 @@ const Draw = (props) => {
 	const [color, setColor] = useState('#62fb60');
 	const [colorHistory, setColorHistory] = useState([]);
 	const [pixelSize, setPixelSize] = useState(20);
+	const [dragging, setDragging] = useState(false);
 	const svgElement = useRef(null);
 	const [svg, setSvg] = useState('');
 	const [css, setCss] = useState(`#pixelart {
@@ -21,7 +24,13 @@ const Draw = (props) => {
 		height: 240px;
 	}
 	`);
-
+	const [copiedSVG, copySVG] = useCopy(svg);
+	const [copiedCSS, copyCSS] = useCopy(`
+	<style>
+	${css}
+	</style>
+	<div id='pixelart-css'></div>
+	`);
 	// on gridSizeChange Reset Canvas
 	useEffect(() => {
 		let new_grid = emptyMatrix(gridSize);
@@ -58,15 +67,14 @@ const Draw = (props) => {
 					}
 				});
 			});
-
 			shadow = shadow.join(',');
 			let new_css = `
-				#pixelart-html {
+				#pixelart-css {
 					width: ${pixelSize * gridSize}px;
 					height: ${pixelSize * gridSize}px;
 				}
 				
-				#pixelart-html:after {
+				#pixelart-css:after {
 					content: '';
 					display: block;
 					width: ${pixelSize}px;
@@ -77,9 +85,7 @@ const Draw = (props) => {
 				}`;
 			setCss(new_css);
 
-			const final_svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${pixelSize * gridSize}" height="${pixelSize * gridSize}" viewBox="0 0 ${pixelSize * gridSize} ${pixelSize * gridSize}">
-								${svg_internal.join('\n')}
-							</svg>	`;
+			const final_svg = [`<svg xmlns="http://www.w3.org/2000/svg" width="${pixelSize * gridSize}" height="${pixelSize * gridSize}" viewBox="0 0 ${pixelSize * gridSize} ${pixelSize * gridSize}">`, svg_internal.join(''), `</svg>`].join('');
 
 			setSvg(final_svg);
 		})();
@@ -94,7 +100,7 @@ const Draw = (props) => {
 		}
 	}, [svg, svgElement]);
 
-	// update html,css
+	// update html,css into the page
 	useEffect(() => {
 		(async () => {
 			const old_style = document.getElementById('live-style');
@@ -120,6 +126,10 @@ const Draw = (props) => {
 	};
 
 	const fillCell = (row, col, e) => {
+		if (e.ctrlKey) {
+			canvas[row][col] && setColor(canvas[row][col]);
+			return;
+		}
 		(async () => {
 			const canvasCopy = [...canvas];
 			canvasCopy[row][col] = color;
@@ -128,17 +138,46 @@ const Draw = (props) => {
 		})();
 	};
 
-	const downloadHTML = async () => {
+	const handleHover = (row, col, e) => {
+		if (e.ctrlKey) {
+			canvas[row][col] && setColor(canvas[row][col]);
+			return;
+		}
+		dragging && fillCell(row, col, e);
+	};
+
+	const downloadCSS = async () => {
 		const text = ` 
 		<style>
 		${css}
 		</style>
-		<div id='pixelart-html'></div>
+		<div id='pixelart-css'></div>
 		`;
 		download('pixelart.html', text);
 	};
 
-	const [dragging, setDragging] = useState(false);
+	const canvasDom = useMemo(() => {
+		return canvas.map((rowData, row) => {
+			return (
+				<div className='cellrow' key={row}>
+					{rowData.map((cell, col) => {
+						const localStyle = {
+							width: pixelSize,
+							height: pixelSize,
+							background: cell,
+						};
+						return <div key={`${row}+${col}`} className='cell' style={localStyle} onClick={(e) => fillCell(row, col, e)} onMouseOver={(e) => handleHover(row, col, e)} />;
+					})}
+				</div>
+			);
+		});
+	}, [canvas, pixelSize, dragging]);
+
+	const downloadCanvas = () => {
+		let str = JSON.stringify(canvas);
+		download('canvas.json', str);
+	};
+
 	return (
 		<Fragment>
 			<div className='draw-container'>
@@ -171,7 +210,9 @@ const Draw = (props) => {
 					<br />
 				</div>
 				<div className='color center'>
-					<span className='small text-muted my-05'>(Hold 'Shift' key to Erase)</span>
+					<span className='small text-muted my-05 text-center'>
+						(Hold 'Shift' key and drag to Erase) <br /> (Hold 'Ctrl' and hover over a cell to copy it's color){' '}
+					</span>
 					<div className='colors'>
 						{colorHistory.map((e, i) => (
 							<span key={i} className='color-history circle' style={{ background: e }} onClick={() => updateColor(e)}></span>
@@ -181,46 +222,49 @@ const Draw = (props) => {
 				</div>
 				<div className='vs noselect'>
 					<div className='art-container'>
-						<span className='art-header'>HTML</span>
-						<div id='pixelart-html' className='no-line-height'></div>
-						<button className='btn action-btn my-1 html-download' onClick={downloadHTML}>
-							Download
-						</button>
+						<span className='art-header'>CSS</span>
+						<div id='pixelart-css' className='no-line-height'></div>
+						<div className='btn-container'>
+							<button className='btn action-btn my-1 css-download' onClick={downloadCSS}>
+								Download
+							</button>
+							<button
+								className='btn action-btn my-1 css-copy'
+								onClick={() => {
+									copyCSS();
+								}}>
+								{copiedCSS ? 'Copied CSS! ' : 'Copy CSS'}
+							</button>
+						</div>
 					</div>
 					<div className='art-container'>
-						<span className='art-header'>YOUR CANVAS</span>
+						<span className='art-header' onDoubleClick={downloadCanvas}>
+							YOUR CANVAS
+						</span>
 						<div id='pixelart-canvas' className='canvas no-line-height' onSelect={() => false} onMouseDown={() => setDragging(true)} onMouseUp={() => setDragging(false)}>
-							{canvas.map((rowData, row) => {
-								return (
-									<div className='cellrow' key={row}>
-										{rowData.map((cell, col) => {
-											const localStyle = {
-												width: pixelSize,
-												height: pixelSize,
-												background: cell,
-											};
-											return <div key={`${row}+${col}`} className='cell' style={localStyle} onClick={(e) => fillCell(row, col, e)} onMouseOver={(e) => dragging && fillCell(row, col, e)} />;
-										})}
-									</div>
-								);
-							})}
+							{canvasDom}
 						</div>
 					</div>
 					<div className='art-container'>
 						<span className='art-header'>SVG</span>
 						<div id='pixelart-svg' className='no-line-height' ref={svgElement}></div>
-						<button
-							className='btn action-btn my-1 svg-download'
-							onClick={() => {
-								download('pixelart.svg', svg);
-							}}>
-							Download
-						</button>
+						<div className='btn-container'>
+							<button
+								className='btn action-btn my-1 svg-download'
+								onClick={() => {
+									download('pixelart.svg', svg);
+								}}>
+								Download
+							</button>
+							<button
+								className='btn action-btn my-1 svg-copy'
+								onClick={() => {
+									copySVG();
+								}}>
+								{copiedSVG ? 'Copied SVG! ' : 'Copy SVG'}
+							</button>
+						</div>
 					</div>
-				</div>
-				<div className='output noselect d-none'>
-					<pre className='html'>{"<div id='pixelart-html'></div>"}</pre>
-					<pre className='css'>{css}</pre>
 				</div>
 			</div>
 		</Fragment>

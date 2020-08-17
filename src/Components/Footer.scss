@@ -1,5 +1,4 @@
 footer {
-	z-index: -1;
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
@@ -15,10 +14,12 @@ footer {
 }
 
 footer {
-	position: absolute;
+	position: fixed;
 	bottom: 0;
 	width: 100%;
 	color: black;
+	// background: inherit;
+	backdrop-filter: blur(2px);
 	transition: 0.5s;
 	border-radius: 3px;
 	font-weight: bold;
